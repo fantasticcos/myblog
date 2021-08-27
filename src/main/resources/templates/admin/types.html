@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html  xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>分类管理</title>
+
+</head>
+<body>
+<nav th:replace="admin/_fragments ::menu(2)" id="nav"   >
+</nav>
+<div class="ui segment container teal m-margin-top-maxx">
+    <table class="ui compact celled teal table">
+        <thead>
+        <tr>
+            <th>编号</th>
+            <th>名称</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="userEntry,userStat : ${lists}">
+
+            <td th:text="${userEntry.tid}"></td>
+            <td th:text="${userEntry.tname}"></td>
+            <td>
+                <a th:href="@{/admin/types/{id}/input(id=${userEntry.tid})}">删除</a>
+            </td>
+
+        </tr>
+        </tbody>
+        <tfoot>
+            <button class="ui  button" th:classappend="${lists.get(0).getTid()}==0?'disabled':''"><a th:href="@{/admin/types/page/{id}(id=${page}-1)}">上一页</a></button>
+            <button class="ui  button"><a th:href="@{/admin/types/page/{id}(id=${page}+1)}">下一页</a></button>
+        </tfoot>
+
+    </table>
+    <div class="ui teal container">
+        <form th:action="@{/admin/types}" method="post" class="ui from">
+            <div class="ui left labeled input">
+                <label class="ui teal basic label">名称</label>
+                <input type="text" name="tname"  placeholder="分类名称" >
+                <input type="text"  name="tid"  placeholder="分类编号" >&nbsp;&nbsp;
+                <input type="submit" id="save-btn" class="ui  submit button"></input>
+            </div>
+        </form>
+    </div>
+    <div class="ui teal container">
+        <div class="ui message">
+            <i class="close icon"></i>
+            <div class="header" th:text="${result}">操作成功！ </div>
+            <p>如果你觉得厌烦，这个特别的通知可以关闭。</p>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script>
+    $('.message .close')
+        .on('click', function() {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;
+</script>
+</body>
+</html>

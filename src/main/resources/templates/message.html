@@ -1,0 +1,288 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>评论</title>
+
+</head>
+<body>
+
+<!--导航-->
+<nav  th:replace="_fragments :: menu(4)" ></nav>
+
+
+
+
+
+<!--中间内容-->
+<div id="waypoint" class="m-margin-top animated fadeIn">
+  <div class="ui container m-opacity box-shadow-max">
+      <!--                新增留言-->
+      <div id="message-form" class="ui form">
+          <input type="hidden" name="parentMessage.id" value="-1">
+          <input type="hidden" name="loc" value="-1">
+          <!--                    留言区-->
+          <div class="field">
+              <textarea name="content" placeholder="请输入留言信息..."></textarea>
+          </div>
+          <div class="ui grid">
+              <!--                    输入姓名-->
+              <div class="five wide column">
+              <div class="field m-mobile-wide m-margin-bottom-small">
+                  <div class="ui left icon input">
+                      <i class="user icon"></i>
+                      <input type="text" name="nickname" placeholder="Id">
+                  </div>
+              </div>
+              </div>
+
+              <!--                        输入邮箱-->
+<!--              <div class="five wide column">-->
+<!--              <div class="field m-mobile-wide m-margin-bottom-small">-->
+<!--                  <div class="ui left icon input">-->
+<!--                      <i class="mail icon"></i>-->
+<!--                      <input type="text" name="email" placeholder="Email">-->
+<!--                  </div>-->
+<!--              </div>-->
+<!--              </div>-->
+
+              <div class="right aligned six wide column">
+              <div class="field m-mobile-wide m-margin-bottom-small">
+                  <button id="messagepost-btn" type="button" class="ui teal button m-mobile-wide"><i class="edit icon"></i>发布</button>
+              </div>
+              </div>
+          </div>
+      </div>
+      <!--留言区-->
+      <div class="ui bottom attached m-margin-top">
+          <div id="message-container" class="ui teal segment">
+              <div th:fragment="commentlist" id="comment-container" class="ui threaded comments" style="max-width: 100%;">
+                  <h3 class="ui dividing header">评论</h3>
+                  <div class="comment" th:each="com, iterStat : ${list}" th:if="${com.parentid==-1}">
+                      <a class="avatar">
+                          <img th:src="@{/images/avatar.png}">
+                      </a>
+                      <div class="content">
+                          <a class="author" >
+                              <span th:text="${com.cnickname}">Matt</span>
+                              <div class="ui mini basic teal left pointing label m-padded-mini" th:if="${com.cnickname} eq '张三丰' ">栈主</div>
+                          </a>
+                          <div class="metadata">
+                              <span class="date" th:text="${#dates.format(com.ccreatetime,'yyyy-MM-dd HH:mm:ss')}">Today at 5:42PM</span>
+                          </div>
+                          <div class="text" th:text="${com.ccontent}">
+                              How artistic!
+                          </div>
+                          <div class="actions">
+                              <a  class="reply" data-th-data-commentloc="${com.cid}" data-th-data-commentid="${com.cid}" data-th-data-commentnickname="${com.cnickname}" th:onclick="reply1(this)">回复</a>
+                              <a class="delete" href="#" onclick="return confirm('确定要删除该评论吗？三思啊! 删了可就没了！')" th:if="${session.user}">删除</a>
+
+                          </div>
+                      </div>
+                      <!--子集评论-->
+                      <div class="comments">
+                          <div class="comment" th:each="ccom, iterStat : ${list}" th:if="${ccom.loc==com.cid&&ccom.cid!=com.cid}">
+                              <a class="avatar">
+                                  <img th:src="@{/images/avatar.png}">
+                              </a>
+                              <div class="content">
+                                  <a class="author" >
+                                      <span th:text="${ccom.cnickname}">小红</span>
+                                      <div class="ui mini basic teal left pointing label m-padded-mini" th:if="${ccom.cnickname} eq '张三丰' ">栈主</div>
+                                      &nbsp;<span class="m-teal" th:text="${'@'+ccom.father.cnickname}">@ 小白</span>
+                                  </a>
+                                  <div class="metadata">
+                                      <span class="date" th:text="${#dates.format(ccom.ccreatetime,'yyyy-MM-dd HH:mm:ss')}">Today at 5:42PM</span>
+                                  </div>
+                                  <div class="m-text" th:text="${ccom.ccontent}"  >
+                                      How artistic!
+                                  </div>
+                                  <div class="actions">
+                                      <a data-th-data-commentloc="${ccom.loc}" data-th-data-commentid="${ccom.cid}" data-th-data-commentnickname="${ccom.cnickname}"  th:onclick="reply1(this)">回复</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+
+          </div>
+
+      </div>
+
+    <br>
+    <br>
+    <br>
+
+  </div>
+</div>
+
+
+<br>
+<br>
+<br>
+
+
+<!--底部栏-->
+<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity">
+    <!--容器-->
+    <div class="ui center aligned container">
+        <div th:replace="_fragments::foot" class="ui inverted divided stackable grid">
+
+        </div>
+        <div class="ui inverted section divider"></div>
+        <div style="color: #F08047;margin-top: -18px" class="ui inverted m-text-thin m-text-spaced">我的博客已营业：<span id="htmer_time" class="item m-text-thin"></span> (*๓´╰╯`๓)</div>
+        <br>
+        <div style="color: #F08047;margin-top: -18px" class="ui inverted m-text-thin m-text-spaced"><a href="http://beian.miit.gov.cn" target="_blank">苏ICP备 2020055137号</a> </div>
+    </div>
+    </div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+
+
+<script th:inline="javascript" type="text/javascript">
+    // $('#newblog-container').load(/*[[@{/footer/newblog}]]*/"/footer/newblog");
+
+
+    var year = [[${session.sitemsg.duration.getYear()}]];
+    var month = [[${session.sitemsg.duration.getMonthValue()}]];
+    var day =[[${session.sitemsg.duration.getDayOfMonth()}]];
+    // 运行时间统计
+    function secondToDate(second) {
+        if (!second) {
+            return 0;
+        }
+        var time = new Array(0, 0, 0, 0, 0);
+        if (second >= 365 * 24 * 3600) {
+            time[0] = parseInt(second / (365 * 24 * 3600));
+            second %= 365 * 24 * 3600;
+        }
+        if (second >= 24 * 3600) {
+            time[1] = parseInt(second / (24 * 3600));
+            second %= 24 * 3600;
+        }
+        if (second >= 3600) {
+            time[2] = parseInt(second / 3600);
+            second %= 3600;
+        }
+        if (second >= 60) {
+            time[3] = parseInt(second / 60);
+            second %= 60;
+        }
+        if (second > 0) {
+            time[4] = second;
+        }
+        return time;
+    }
+    function setTime() {
+        /*此处为网站的创建时间*/
+        var create_time = Math.round(new Date(Date.UTC(year, month, day, 15, 15, 15)).getTime() / 1000);
+        var timestamp = Math.round((new Date().getTime() + 8 * 60 * 60 * 1000) / 1000);
+        currentTime = secondToDate((timestamp - create_time));
+        currentTimeHtml = currentTime[0] + '年' + currentTime[1] + '天'
+            + currentTime[2] + '时' + currentTime[3] + '分' + currentTime[4]
+            + '秒';
+        document.getElementById("htmer_time").innerHTML = currentTimeHtml;
+    }
+    setInterval(setTime, 1000);
+
+
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+
+    $('.wechat').popup({
+        popup : $('.wechat-qr'),
+        position: 'bottom center'
+    });
+    $('.qq').popup();
+
+
+    //评论表单验证
+    $('.ui.form').form({
+        fields: {
+            title: {
+                identifier: 'content',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入评论内容'
+                }
+                ]
+            },
+            content: {
+                identifier: 'nickname',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入你的大名'
+                }]
+            } //,
+            // type: {
+            //     identifier: 'email',
+            //     rules: [{
+            //         type: 'email',
+            //         prompt: '请填写正确的邮箱地址'
+            //     }]
+            // }
+        }
+    });
+
+    // 初始化加载
+    // $(function () {
+    //     $("#message-container").load(/*[[@{/messagecomment}]]*/"messagecomment");
+    // });
+
+    // 校验信息
+    $('#messagepost-btn').click(function () {
+        var boo = $('.ui.form').form('validate form');
+        if (boo) {
+            console.log('校验成功');
+            postData();
+        } else {
+            console.log('校验失败');
+        }
+    });
+
+    //发送请求给后端
+    function postData() {
+        $("#message-container").load("/message/view",{
+            "parentid" : Number.parseInt($("[name='parentMessage.id']").val()),
+             "bid" : parseInt('-1'),
+            "cnickname": $("[name='nickname']").val(),
+            "cemail"   : '',
+            "ccontent" : $("[name='content']").val(),
+            "loc" : Number.parseInt($("[name='loc']").val()),
+            "ccreatetime": new Date()
+
+        },function (responseTxt, statusTxt, xhr) {
+//        $(window).scrollTo($('#message-container'),500);
+            clearContent();
+        });
+    }
+
+    // 清除表单
+    function clearContent() {
+        $("[name='nickname']").val('');
+        $("[name='content']").val('');
+        $("[name='parentMessage.id']").val(-1);
+        $("[name='content']").attr("placeholder", "请输入评论信息...");
+    }
+
+    function reply1(objj) {
+
+        var commentId = $(objj).data('commentid');
+        var commentNickname = $(objj).data('commentnickname');
+        var commentloc = $(objj).data('commentloc');
+
+        $("[name='content']").attr("placeholder", "@"+commentNickname).focus();
+        $("[name='parentMessage.id']").val(commentId);
+        $("[name='loc']").val(commentloc);
+        $(window).scrollTo($('#comment-form'),500);
+
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+﻿<!DOCTYPE html>
+<html  xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>分类管理</title>
+
+</head>
+<body>
+<div class="ui m-teal container">
+    <form th:action="@{/admin/types}" method="post" class="ui from">
+        <div class="ui left labeled input">
+            <label class="ui teal basic label">名称</label>
+            <input type="text" name="tname"  placeholder="分类名称" >
+        </div>
+        <div class="ui right aligned container">
+            <button type="button" class="ui button" onclick="window.history.go(-1)" >返回</button>
+            <input type="submit" id="save-btn" class="ui secondary submit button">提交</input>
+        </div>
+    </form>
+</div>
+</body>
+</html>

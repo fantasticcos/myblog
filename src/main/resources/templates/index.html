@@ -1,0 +1,211 @@
+﻿<!DOCTYPE html>
+<html  xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>主页</title>
+
+</head>
+<body>
+
+<!--导航-->
+<nav  th:replace="_fragments :: menu(1)" ></nav>
+
+
+
+
+<!--播放器-->
+
+
+<!--中间内容-->
+<div class="m-padded-tb-big animated fadeIn">
+    <div class="ui container">
+        <div class="ui stackable grid">
+            <!--博客内容-->
+            <div class="ui vertical segment">
+                <div class="ui m-container-sosmall m-opacity">
+                    <div class="ui secondary segment " align="center">
+                        <i class="bookmark icon"></i>最新文章
+                    </div>
+                </div>
+                <!--博文列表-->
+                <div class="ui padded segment m-padded-tb-huge m-opacity" th:each="blog, iterStat : ${page.list}">
+                    <div class="ui large aligned mobile reversed stackable grid" >
+                        <!--博文信息-->
+                        <div class="eleven wide column ">
+                            <h3 class="ui header" ><a href="#" th:href="@{/blogs/{bid}(bid=${blog.bid})}" target="_blank" class="m-black" th:text="${blog.btitle}">ZQ个人博客</a></h3>
+                            <p th:text="${blog.bdes}" class="m-text m-margin-top-max"> 在出现的问题。</p>
+                            <div class="ui m-margin-top-max grid">
+                                <div class="eleven wide column">
+                                    <div class="ui mini horizontal link list">
+                                        <div class="item">
+                                            <img th:src="${blog.firstpicture}" alt="" class="ui avatar image">
+                                            <div class="content"><a href="#" target="_blank" class="header" >Bear</a></div>
+                                        </div>
+                                        <div class="item">
+                                            <i class="calendar icon"></i><span th:text="${#dates.format(blog.createtime,'yyyy-MM-dd ')}">2020-06-23</span>
+                                        </div>
+                                        <div class="item">
+                                            <i class="eye icon" ></i> <span th:text="${blog.bview}">341</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="right aligned five wide column">
+                                    <a href="#" target="_blank" class="ui teal basic label m-padded-tiny m-text-thin" th:text="${blog.typename}">web前端</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!--博文图片-->
+                        <div class="five wide column">
+                            <a href="#" target="_blank">
+                                <img th:src="${blog.firstpicture}" alt="" class="ui rounded image" style="max-height: 300px !important;">
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!--分页-->
+            <div class="ui bottom attached segment m-opacity stackable grid">
+                <div class="three wide column" align="center">
+                    <a class="item" th:href="@{index(pagenum=${page.hasPreviousPage}?${page.prePage}:1)}">上一页</a>
+                </div>
+
+                <div class="ten wide column" align="center">
+                    <p> <span></span> / <span></span> </p>
+                </div>
+
+                <div class="three wide column" align="center">
+                    <a class="item" th:href="@{index(pagenum=${page.hasNextPage}?${page.nextPage}:${page.pages})}">下一页</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!--置顶图标-->
+<div class="m-padded-tb-large m-fixed m-right-bottom">
+    <a href="#" class="ui icon button"><i class="chevron up icon"></i> </a>
+</div>
+
+
+
+<br>
+<br>
+<br>
+<!--底部栏-->
+<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity">
+    <!--容器-->
+    <div class="ui center aligned container">
+        <div th:replace="_fragments::foot" class="ui inverted divided stackable grid">
+
+        </div>
+        <div class="ui inverted section divider"></div>
+        <div style="color: #F08047;margin-top: -18px" class="ui inverted m-text-thin m-text-spaced">我的博客已营业：<span id="htmer_time" class="item m-text-thin" ></span> </div>
+        <br>
+        <div style="color: #F08047;margin-top: -18px" class="ui inverted m-text-thin m-text-spaced"><a href="http://beian.miit.gov.cn" target="_blank">苏ICP备 2020055137号</a> </div>
+    </div>
+    </div>
+
+</footer>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script src="../static/lib/waypoints/jquery.waypoints.min.js" th:src="@{/lib/waypoints/jquery.waypoints.min.js}"></script>
+
+<script  th:inline="javascript" type="text/javascript">
+    var year = [[${session.sitemsg.duration.getYear()}]];
+    var month = [[${session.sitemsg.duration.getMonthValue()}]];
+    var day =[[${session.sitemsg.duration.getDayOfMonth()}]];
+    // $('#newblog-container').load(/*[[@{/footer/newblog}]]*/"/footer/newblog");
+    $('.menu.toggle').click(function () {
+      $('.m-item').toggleClass('m-mobile-hide');
+    });
+    
+    // 运行时间统计
+    function secondToDate(second) {
+        if (!second) {
+            return 0;
+        }
+        var time = new Array(0, 0, 0, 0, 0);
+        if (second >= 365 * 24 * 3600) {
+            time[0] = parseInt(second / (365 * 24 * 3600));
+            second %= 365 * 24 * 3600;
+        }
+        if (second >= 24 * 3600) {
+            time[1] = parseInt(second / (24 * 3600));
+            second %= 24 * 3600;
+        }
+        if (second >= 3600) {
+            time[2] = parseInt(second / 3600);
+            second %= 3600;
+        }
+        if (second >= 60) {
+            time[3] = parseInt(second / 60);
+            second %= 60;
+        }
+        if (second > 0) {
+            time[4] = second;
+        }
+        return time;
+    }
+    function setTime() {
+        /*此处为网站的创建时间*/
+        var create_time = Math.round(new Date(Date.UTC(year, month, day, 15, 15, 15)).getTime() / 1000);
+        var timestamp = Math.round((new Date().getTime() + 8 * 60 * 60 * 1000) / 1000);
+        currentTime = secondToDate((timestamp - create_time));
+        currentTimeHtml = currentTime[0] + '年' + currentTime[1] + '天'
+            + currentTime[2] + '时' + currentTime[3] + '分' + currentTime[4]
+            + '秒';
+        document.getElementById("htmer_time").innerHTML = currentTimeHtml;
+    }
+    setInterval(setTime, 1000);
+
+
+   
+
+    // 显示公众号
+    $('.tencent').popup({
+        popup : $('.tencent-qr'),
+        position: 'bottom center'
+    });
+
+    // 显示微信
+    $('.wechat').popup({
+        popup : $('.wechat-qr'),
+        position: 'bottom center'
+    });
+
+    // 显示QQ
+    $('.qq').popup({
+        popup : $('.qq-qr'),
+        position: 'bottom center'
+    });
+
+    // 显示邮箱
+    $('.email').popup();
+
+    // 显示CSDN
+    $('.csdn').popup();
+
+    // 显示github
+    $('.github').popup();
+
+    // 导航栏显示
+    // var waypoint = new Waypoint({
+    //     element: document.getElementById('waypoint'),
+    //     handler: function(direction) {
+    //         if (direction == 'down') {
+    //             $('#nav').show(500);
+    //         } else {
+    //             $('#nav').hide(500);
+    //         }
+    //         console.log('Scrolled to waypoint!  ' + direction);
+    //     }
+    // })
+</script>
+</body>
+</html>

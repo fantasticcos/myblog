@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhx.blog.dao.IBlogDao">
+    <resultMap id="blogandcom" type="com.hhx.blog.pojo.Blog">
+        <id property="bid" column="bid"></id>
+        <result property="btitle" column="btitle"></result>
+        <result property="bcontent" column="bcontent"></result>
+        <result property="firstpicture" column="firstpicture"></result>
+        <result property="bflag" column="bflag"></result>
+        <result property="bview" column="bview"></result>
+        <result property="bprice" column="bprice"></result>
+        <result property="bstatus" column="bstatus"></result>
+        <result property="commentable" column="commentable"></result>
+        <result property="published" column="published"></result>
+        <result property="recomend" column="recomend"></result>
+        <result property="createtime" column="createtime"></result>
+        <result property="bdes" column="bdes"></result>
+        <result property="type" column="type"></result>
+        <result property="typename" column="typename"></result>
+        <collection property="comments" column="bid" javaType="com.hhx.blog.pojo.Comment">
+            <id property="cid" column="cid"></id>
+            <result property="cnickname" column="cnickname"></result>
+            <result property="cemail" column="cemail"></result>
+            <result property="ccontent" column="ccontent"></result>
+            <result property="avatar" column="avatar"></result>
+            <result property="parentid" column="parentid"></result>
+            <result property="ccreatetime" column="ccreatetime"></result>
+            <result property="loc" column="loc"></result>
+
+        </collection>
+    </resultMap>
+    <select id="getbyid" parameterType="Long" resultType="com.hhx.blog.pojo.Blog">
+        select * from `blog`
+        where bid = #{bid}
+    </select>
+
+    <select id="getmorebyid" parameterType="Long" resultMap="blogandcom">
+            SELECT n.*,a.cid,a.`cnickname`,a.`cemail`,a.`ccontent`,a.`avatar`,a.`ccreatetime`,a.`parentid`,a.`loc` FROM `comment` a RIGHT OUTER JOIN blog n ON a.`bid`= n.`bid`
+                WHERE n.bid = #{bid}
+    </select>
+    
+    <select id="getall" resultMap="blogandcom">
+        select * from `blog`
+        ORDER BY bid DESC
+    </select>
+    
+    <insert id="addblog" parameterType="com.hhx.blog.pojo.Blog">
+        INSERT INTO `blog` (bid,btitle,bcontent,firstpicture,bflag,bview,bprice,bstatus,commentable,published,recomend,createtime,`type`,`bdes`)
+        VALUES(#{bid},#{btitle},#{bcontent},#{firstpicture},#{bflag},#{bview},#{bprice},#{bstatus},#{commentable},#{published},#{recomend},#{createtime},#{type},#{bdes})
+    </insert>
+
+    <update id="updateblog" parameterType="com.hhx.blog.pojo.Blog">
+        update `blog`
+        set bview = #{bview}
+        where bid =#{bid}
+    </update>
+
+    <delete id="deleteblog" parameterType="Long">
+        DELETE FROM `blog`
+        WHERE bid=#{bid}
+    </delete>
+
+    <select id="aboutsearch" parameterType="com.hhx.blog.pojo.Blog" resultType="com.hhx.blog.pojo.Blog">
+        select * from `blog`
+        <where>
+            <if test="btitle!=null">
+                and btitle like CONCAT('%',#{btitle},'%')
+            </if>
+            <if test="type!=null">
+                and type=#{type}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addcom" parameterType="com.hhx.blog.pojo.Comment">
+        insert into Comment(`cnickname`,`cemail`,`ccontent`,`ccreatetime`,`bid`,`parentid`,`loc`)
+        values(#{cnickname},#{cemail},#{ccontent},#{ccreatetime},#{bid},#{parentid},#{loc})
+    </insert>
+
+    <insert id="addmcom" parameterType="com.hhx.blog.pojo.Comment">
+        insert into mcomment(`cnickname`,`cemail`,`ccontent`,`ccreatetime`,`bid`,`parentid`,`loc`)
+        values(#{cnickname},#{cemail},#{ccontent},#{ccreatetime},#{bid},#{parentid},#{loc})
+    </insert>
+
+    <select id="getallmcom" resultType="com.hhx.blog.pojo.Comment">
+        select * from `mcomment`
+    </select>
+
+    <select id="totalnum" resultType="Integer">
+        select count(*) from `blog`
+    </select>
+
+    <select id="comnum" resultType="Integer">
+        select count(*) from `comment`
+    </select>
+    <select id="leftmsgnum" resultType="Integer">
+        select count(*) from `mcomment`
+    </select>
+
+</mapper>

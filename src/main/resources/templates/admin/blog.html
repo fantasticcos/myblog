@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>博客管理</title>
+
+</head>
+<body>
+<nav th:replace="admin/_fragments ::menu(4)" id="nav"  class="gird-header" >
+</nav>
+<div class="ui segment container teal m-margin-top-maxx">
+    <div class="ui segment teal container">
+        <form th:action="@{/admin/blogadmin}" method="post" class="ui form">
+            名称查询:<input type="text" name="btitle" style="width: 30% !important;">&nbsp;&nbsp;
+<!--            类别查询<input type="text" name="type" style="width: 30% !important;">-->
+            类别查询:<select   class="ui search dropdown" name="type" style="width: 30% !important;display: inline;">
+                        <option  th:each="userEntry,userStat : ${typelist}" th:value="${userEntry.tid}" th:text="${userEntry.tname}">State</option>
+                    </select><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" id="save-btn" class="ui  submit button"></input>
+        </form>
+    </div>
+    <div class="ui segment teal container">
+        <table class="ui compact celled teal table">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="blog, iterStat : ${page.list}">
+
+                <td th:text="${blog.bid}"></td>
+                <td th:text="${blog.btitle}"></td>
+                <td>
+                    <a th:href="@{/admin/blogs/remove/{id}(id=${blog.bid})}">删除</a>
+                    <a th:href="@{/admin/blogs/up/{id}(id=${blog.bid})}">修改</a>
+                </td>
+
+            </tr>
+            </tbody>
+            <tfoot>
+            <button class="ui  button" ><a th:href="@{/admin/blogadmin(pagenum=${page.hasPreviousPage}?${page.prePage}:1)}">上一页</a></button>
+            <button class="ui  button"><a th:href="@{/admin/blogadmin(pagenum=${page.hasNextPage}?${page.nextPage}:${page.pages})}">下一页</a></button>
+            <button class="ui green  button"><a th:href="@{/admin/blogs/input}">编写博客</a></button>
+            </tfoot>
+
+        </table>
+
+
+        <div class="ui teal container">
+            <div class="ui message">
+                <i class="close icon"></i>
+                <div class="header" th:text="${result}">操作成功！ </div>
+                <p>如果你觉得厌烦，这个特别的通知可以关闭。</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script>
+    $('.message .close')
+        .on('click', function() {
+            $(this)
+                .closest('.message')
+                .transition('fade')
+            ;
+        })
+    ;
+</script>
+</body>
+</html>

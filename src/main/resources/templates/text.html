@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${blog.btitle}"></title>
+    <link href="../static/images/me.png" th:href="@{/images/me.png}" rel="icon" type="image/x-ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+    <link rel="stylesheet" href="../static/css/typo.css" th:href="@{/css/typo.css}">
+    <link rel="stylesheet" href="../static/css/animate.css" th:href="@{/css/animate.css}">
+    <link rel="stylesheet" href="../static/lib/prism/prism.css" th:href="@{/lib/prism/prism.css}">
+    <link rel="stylesheet" href="../static/lib/tocbot/tocbot.css" th:href="@{/lib/tocbot/tocbot.css}">
+    <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+    <link rel="stylesheet" href="../static/css/timeline.css" th:href="@{/css/timeline.css}">
+
+</head>
+<body>
+<nav  th:replace="_fragments :: menu(1)" ></nav>
+
+
+<div class="m-bg-type_outer" style="width: 100%;height: 50%">
+    <img src="../static/images/bg.jpg" alt="" class="ui m-bg image" style="width: 100%;height: 100%">
+    <div class="m-bg-class_cover">
+        <div class="ui container" style="position: relative ;bottom: -540px;">
+            <h2 class="m-font-size-title-large" align="center" th:text="${blog.btitle}">正文</h2>
+            <div class="ui container" align="center">
+                <div class="ui horizontal link list" align="center">
+                    <div class="item">
+                        <div class="ui orange basic label" style="font-size: 7px">原创</div>
+                    </div>
+                    <div class="item">
+                        <i class="user outline outline icon m-font-size-text-mini"></i>
+                        <a href="#" style="color: #ffffff;font-size: 18px">BEAR</a>
+                    </div>
+                    <div class="item">
+                        <i class="calendar icon m-font-size-text-mini"></i>
+                        <span class="m-font-size-text-mini" th:text="${#dates.format(blog.createtime,'yyyy-MM-dd ')}">2020-01-01</span>
+                    </div>
+                    <div class="item">
+                        <i class="eye icon m-font-size-text-mini"></i> <span class="m-font-size-text-mini" th:text="${blog.bview}">2222</span>
+                    </div>
+                    <div class="item">
+                        <i class="comment outline icon m-font-size-text-mini"></i>
+                        <span class="m-font-size-text-mini" th:text="${blog.comments.size()}">2222</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="m-margin-top-max animated fadeIn">
+    <div class="segment ui container teal  box-shadow-max">
+        <div class="ui attached padded segment">
+            <div id="content" class="typo  typo-selection js-toc-content m-padded-lr-responsive m-padded-tb-large" th:utext="${blog.bcontent}">
+            </div>
+
+            <div class="ui horizontal divider">end</div>
+            <div class="ui bottom attached segment">
+                <div class=" ui teal segment">
+                    <div th:fragment="commentlist" id="comment-container" class="ui threaded comments" style="max-width: 100%;">
+                        <h3 class="ui dividing header">评论</h3>
+                        <div class="comment" th:each="com, iterStat : ${blog.comments}" th:if="${com.parentid==-1}">
+                            <a class="avatar">
+                                <img th:src="@{/images/avatar.png}">
+                            </a>
+                            <div class="content">
+                                <a class="author" >
+                                    <span th:text="${com.cnickname}">Matt</span>
+                                    <div class="ui mini basic teal left pointing label m-padded-mini" th:if="${com.cnickname} eq '张三丰' ">栈主</div>
+                                </a>
+                                <div class="metadata">
+                                    <span class="date" th:text="${#dates.format(com.ccreatetime,'yyyy-MM-dd HH:mm:ss')}">Today at 5:42PM</span>
+                                </div>
+                                <div class="text" th:text="${com.ccontent}">
+                                    How artistic!
+                                </div>
+                                <div class="actions">
+                                    <a  class="reply" data-th-data-commentloc="${com.cid}" data-th-data-commentid="${com.cid}" data-th-data-commentnickname="${com.cnickname}" th:onclick="reply1(this)">回复</a>
+                                    <a class="delete" href="#" onclick="return confirm('确定要删除该评论吗？三思啊! 删了可就没了！')" th:if="${session.user}">删除</a>
+
+                                </div>
+                            </div>
+                            <!--子集评论-->
+                            <div class="comments">
+                                <div class="comment" th:each="ccom, iterStat : ${blog.comments}" th:if="${ccom.loc==com.cid&&ccom.cid!=com.cid}">
+                                    <a class="avatar">
+                                        <img th:src="@{/images/avatar.png}">
+                                    </a>
+                                    <div class="content">
+                                        <a class="author" >
+                                            <span th:text="${ccom.cnickname}">小红</span>
+                                            <div class="ui mini basic teal left pointing label m-padded-mini" th:if="${ccom.cnickname} eq '张三丰' ">栈主</div>
+                                            &nbsp;<span class="m-teal" th:text="${'@'+ccom.father.cnickname}">@ 小白</span>
+                                        </a>
+                                        <div class="metadata">
+                                            <span class="date" th:text="${#dates.format(ccom.ccreatetime,'yyyy-MM-dd HH:mm:ss')}">Today at 5:42PM</span>
+                                        </div>
+                                        <div class="m-text" th:text="${ccom.ccontent}"  >
+                                            How artistic!
+                                        </div>
+                                        <div class="actions">
+                                            <a data-th-data-commentloc="${ccom.loc}" data-th-data-commentid="${ccom.cid}" data-th-data-commentnickname="${ccom.cnickname}"  th:onclick="reply1(this)">回复</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="comment-form" class="ui form">
+                        <input type="hidden" name="blogId" th:value="${blog.bid}">
+                        <input type="hidden" name="parentComment.id" value="-1">
+                        <input type="hidden" name="loc" value="-1">
+                        <div class="field">
+                            <textarea name="content" placeholder="请输入评论信息..."></textarea>
+                        </div>
+                        <div class="fields">
+                            <div class="field m-mobile-wide m-margin-bottom-small">
+                                <div class="ui left icon input">
+                                    <i class="user icon"></i>
+                                    <input type="text" name="nickname" placeholder="姓名">
+                                </div>
+                            </div>
+<!--                            <div class="field m-mobile-wide m-margin-bottom-small">-->
+<!--                                <div class="ui left icon input">-->
+<!--                                    <i class="mail icon"></i>-->
+<!--                                    <input type="text" name="email" placeholder="邮箱">-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="field  m-margin-bottom-small m-mobile-wide">
+                                <button id="commentpost-btn" type="button" class="ui teal button m-mobile-wide" ><i class="edit icon"></i>发布</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="toolbar" class="m-padded m-fixed m-right-bottom" style="display: none">
+    <div class="ui vertical icon buttons ">
+        <button type="button" class="ui toc teal button" >目录</button>
+        <a href="#comment-container" class="ui teal button" >评论</a>
+        <div id="toTop-button" class="ui icon button" ><i class="chevron up icon"></i></div>
+    </div>
+</div>
+<footer class="ui inverted vertical segment m-padded-tb-massive m-opacity">
+    <!--容器-->
+    <div class="ui center aligned container">
+        <div th:replace="_fragments::foot" class="ui inverted divided stackable grid">
+
+        </div>
+        <div class="ui inverted section divider"></div>
+        <div style="color: #F08047;margin-top: -18px" class="ui inverted m-text-thin m-text-spaced">我的博客已营业：<span id="htmer_time" class="item m-text-thin"></span> (*๓´╰╯`๓)</div>
+        <a rel="nofollow" href="http://www.bootstrapmb.com" target="_blank"> </a>
+    </div>
+    </div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.2/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery.scrollto@2.1.2/jquery.scrollTo.min.js"></script>
+<script src="../static/lib/qrcode/qrcode.min.js" th:src="@{/lib/qrcode/qrcode.min.js}"></script>
+<script src="../static/lib/prism/prism.js" th:src="@{/lib/prism/prism.js}"></script>
+<script src="../static/lib/tocbot/tocbot.min.js" th:src="@{/lib/tocbot/tocbot.min.js}"></script>
+<script src="../static/lib/waypoints/jquery.waypoints.min.js" th:src="@{/lib/waypoints/jquery.waypoints.min.js}"></script>
+
+<script th:inline="javascript">
+
+    var year = [[${session.sitemsg.duration.getYear()}]];
+    var month = [[${session.sitemsg.duration.getMonthValue()}]];
+    var day =[[${session.sitemsg.duration.getDayOfMonth()}]];
+    function secondToDate(second) {
+        if (!second) {
+            return 0;
+        }
+        var time = new Array(0, 0, 0, 0, 0);
+        if (second >= 365 * 24 * 3600) {
+            time[0] = parseInt(second / (365 * 24 * 3600));
+            second %= 365 * 24 * 3600;
+        }
+        if (second >= 24 * 3600) {
+            time[1] = parseInt(second / (24 * 3600));
+            second %= 24 * 3600;
+        }
+        if (second >= 3600) {
+            time[2] = parseInt(second / 3600);
+            second %= 3600;
+        }
+        if (second >= 60) {
+            time[3] = parseInt(second / 60);
+            second %= 60;
+        }
+        if (second > 0) {
+            time[4] = second;
+        }
+        return time;
+    }
+    function setTime() {
+        /*此处为网站的创建时间*/
+        var create_time = Math.round(new Date(Date.UTC(year, month, day, 15, 15, 15)).getTime() / 1000);
+        var timestamp = Math.round((new Date().getTime() + 8 * 60 * 60 * 1000) / 1000);
+        currentTime = secondToDate((timestamp - create_time));
+        currentTimeHtml = currentTime[0] + '年' + currentTime[1] + '天'
+            + currentTime[2] + '时' + currentTime[3] + '分' + currentTime[4]
+            + '秒';
+        document.getElementById("htmer_time").innerHTML = currentTimeHtml;
+    }
+    setInterval(setTime, 1000);
+    $('.menu.toggle').click(function () {
+        $('.m-item').toggleClass('m-mobile-hide');
+    });
+
+    tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.js-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.js-toc-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3',
+    });
+    function reply1(objj) {
+
+        var commentId = $(objj).data('commentid');
+        var commentNickname = $(objj).data('commentnickname');
+        var commentloc = $(objj).data('commentloc');
+
+        $("[name='content']").attr("placeholder", "@"+commentNickname).focus();
+        $("[name='parentComment.id']").val(commentId);
+        $("[name='loc']").val(commentloc);
+        $(window).scrollTo($('#comment-form'),500);
+
+    }
+
+    $('.ui.form').form({
+        fields: {
+            title: {
+                identifier: 'content',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入评论内容'
+                }
+                ]
+            },
+            content: {
+                identifier: 'nickname',
+                rules: [{
+                    type: 'empty',
+                    prompt: '请输入你的大名'
+                }]
+            }
+            // ,
+            // type: {
+            //     identifier: 'email',
+            //     rules: [{
+            //         type: 'email',
+            //         prompt: '请填写正确的邮箱地址'
+            //     }]
+            // }
+        }
+    });
+
+    $('#commentpost-btn').click(function () {
+        var boo = $('.ui.form').form('validate form');
+        if (boo) {
+            console.log('校验成功');
+            postData();
+        } else {
+            console.log('校验失败');
+        }
+    });
+
+    function postData() {
+
+        $("#comment-container").load("/blogs/viewonblog/",{
+            "parentid" : Number.parseInt($("[name='parentComment.id']").val()),
+            "bid" : $("[name='blogId']").val(),
+            "cnickname": $("[name='nickname']").val(),
+            "cemail"   : '',
+            "ccontent" : $("[name='content']").val(),
+            "loc" : Number.parseInt($("[name='loc']").val()),
+            "ccreatetime": new Date()
+        },function (responseTxt, statusTxt, xhr) {
+            $(window).scrollTo($('#goto'),500);
+            clearContent();
+        });
+    }
+
+    function clearContent() {
+        $("[name='nickname']").val('');
+        $("[name='content']").val('');
+        $("[name='parentComment.id']").val(-1);
+        $("[name='content']").attr("placeholder", "请输入评论信息...");
+    }
+</script>
+</body>
+</html>

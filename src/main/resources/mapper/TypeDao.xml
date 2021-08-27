@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hhx.blog.dao.ITypeDao">
+    <resultMap id="detailtype" type="com.hhx.blog.pojo.Type" >
+        <id property="tid" column="tid"></id>
+        <result property="tname" column="tname"></result>
+        <collection property="blogs" column="type" javaType="com.hhx.blog.pojo.Blog">
+            <id property="bid" column="bid"></id>
+            <result property="btitle" column="btitle"></result>
+            <result property="bcontent" column="bcontent"></result>
+            <result property="firstpicture" column="firstpicture"></result>
+            <result property="bflag" column="bflag"></result>
+            <result property="bview" column="bview"></result>
+            <result property="createtime" column="createtime"></result>
+            <result property="type" column="type"></result>
+            <result property="bdes" column="bdes"></result>
+            <result property="typename" column="typename"></result>
+        </collection>
+    </resultMap>
+
+    <select id="getlist" parameterType="com.hhx.blog.pojo.Page" resultType="com.hhx.blog.pojo.Type">
+        SELECT * FROM `type`
+        ORDER BY tid ASC
+        LIMIT #{from},#{to}
+    </select>
+    <select id="getmorelistbyid"  resultMap="detailtype">
+        SELECT * FROM `type`,blog
+        WHERE `type`.`tid`=blog.`type`
+
+    </select>
+    <select id="typeblog" parameterType="Long" resultType="com.hhx.blog.pojo.Blog">
+        SELECT * FROM `type`,blog
+        WHERE `type`.`tid`=blog.`type` and `type`.`tid`=#{tid}
+    </select>
+    <select id="getall"  resultType="com.hhx.blog.pojo.Type">
+        SELECT * FROM `type`
+        ORDER BY tid ASC
+    </select>
+    <select id="getbyid" parameterType="Long" resultType="com.hhx.blog.pojo.Type">
+        SELECT * FROM `type`
+            WHERE tid=#{tid}
+    </select>
+    <insert id="save" parameterType="com.hhx.blog.pojo.Type" >
+
+        INSERT INTO `type`(tid,tname) VALUES(#{tid},#{tname})
+    </insert>
+
+    <select id="getbyname" parameterType="String" resultType="com.hhx.blog.pojo.Type">
+        SELECT * FROM `type`
+            WHERE tname=#{tname}
+    </select>
+
+    <update id="updatetype" parameterType="com.hhx.blog.pojo.Type">
+
+        update `type`
+        set tname= #{tname}
+        where tid =#{tid}
+    </update>
+    <delete id="deletetype" parameterType="Long">
+        delete from `type`
+        where tid = #{tid}
+    </delete>
+
+</mapper>

@@ -1,0 +1,23 @@
+<!DOCTYPE html >
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="admin/_fragments :: head(~{::title})">
+    <title>登录</title>
+
+</head>
+<body>
+<nav th:replace="admin/_fragments ::menu(0)" id="nav"  class="gird-header" >
+</nav>
+<h1 align="center">用户登录</h1>
+<form class="ui form" method="post" action="#" th:action="@{/admin/login}" onsubmit="">
+    <div class="field">
+        <label>用户名：</label>
+        <input type="text" name="username" placeholder="用户名">
+    </div>
+    <div class="field">
+        <label>密码：</label>
+        <input type="password" name="password" placeholder="密码">
+    </div>
+    <button class="ui button" type="submit">登录</button>
+</form>
+</body>
+</html>
